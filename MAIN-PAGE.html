@@ -3,204 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webhook Selector with Embed Preview</title>
+    <title>Open YouTube Button</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-        }
-        .button-group {
-            margin-top: 20px;
-        }
-        .button {
-            margin-right: 10px;
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .button:hover {
-            background-color: #0056b3;
-        }
-        .hidden {
-            display: none;
-        }
-        .embed-preview {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-            margin-top: 20px;
-            background-color: #f9f9f9;
-        }
-        .embed-preview .embed-header {
-            display: flex;
-            align-items: center;
-        }
-        .embed-preview .embed-header img {
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-        .embed-preview .embed-body {
-            margin-top: 10px;
-        }
-        .embed-preview .embed-footer {
-            margin-top: 10px;
-            color: #888;
-        }
-        input, textarea {
-            display: block;
-            width: calc(100% - 22px);
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        label {
-            margin-bottom: 5px;
-            display: block;
-        }
-        .dropzone {
-            border: 2px dashed #007BFF;
-            border-radius: 5px;
-            padding: 20px;
-            text-align: center;
-            margin-top: 20px;
-            background-color: #f0f8ff;
-            color: #007BFF;
-        }
-        .dropzone.active {
-            background-color: #e6f7ff;
-        }
-        .dropzone input[type="file"] {
-            display: none;
-        }
-        .dropzone button {
-            background-color: #0056b3;
-            border: none;
+        .youtube-button {
+            background-color: #FF0000; /* YouTube red */
             color: white;
-            padding: 10px;
+            border: none;
             border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
             cursor: pointer;
+            text-align: center;
         }
-        .dropzone button:hover {
-            background-color: #004085;
+        .youtube-button:hover {
+            background-color: #CC0000; /* Darker red */
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Select a Webhook</h1>
-        <label for="webhookSelect">Webhook:</label>
-        <select id="webhookSelect">
-            <option value="">--Select a Webhook--</option>
-            <option value="webhook1" data-webhook="https://example.com/webhook1">Webhook 1</option>
-            <option value="webhook2" data-webhook="https://example.com/webhook2">Webhook 2</option>
-            <option value="webhook3" data-webhook="https://example.com/webhook3">Webhook 3</option>
-            <option value="webhook4" data-webhook="https://example.com/webhook4">Webhook 4</option>
-            <option value="webhook5" data-webhook="https://example.com/webhook5">Webhook 5</option>
-            <option value="webhook6" data-webhook="https://example.com/webhook6">Webhook 6</option>
-            <option value="webhook7" data-webhook="https://example.com/webhook7">Webhook 7</option>
-            <option value="webhook8" data-webhook="https://example.com/webhook8">Webhook 8</option>
-            <option value="webhook9" data-webhook="https://example.com/webhook9">Webhook 9</option>
-            <option value="webhook10" data-webhook="https://example.com/webhook10">Webhook 10</option>
-        </select>
-        
-        <div class="button-group">
-            <button class="button" id="continueButton" onclick="showOptions()">Continue</button>
-        </div>
-        
-        <div id="options" class="hidden">
-            <h2>What would you like to do with the selected webhook?</h2>
-            <button class="button" onclick="handleOption('embed')">Embed</button>
-            <button class="button" onclick="handleOption('message')">Message</button>
-            <button class="button" onclick="handleOption('file')">File</button>
-        </div>
-        
-        <div id="embedOptions" class="hidden">
-            <h2>Create Your Embed</h2>
-            <label for="embedTitle">Title:</label>
-            <input type="text" id="embedTitle" placeholder="Embed Title" oninput="updateEmbedPreview()">
-            
-            <label for="embedDescription">Description:</label>
-            <textarea id="embedDescription" rows="4" placeholder="Embed Description" oninput="updateEmbedPreview()"></textarea>
-            
-            <label for="embedColor">Color (Hex):</label>
-            <input type="text" id="embedColor" placeholder="#7289DA" oninput="updateEmbedPreview()">
-            
-            <div id="embedPreview" class="embed-preview">
-                <div class="embed-header">
-                    <img id="embedThumbnail" src="https://via.placeholder.com/40" alt="Thumbnail">
-                    <strong id="embedTitlePreview">Title</strong>
-                </div>
-                <div id="embedDescriptionPreview" class="embed-body">Description</div>
-                <div id="embedFooter" class="embed-footer">Footer Text</div>
-            </div>
-            
-            <button class="button" onclick="sendEmbed()">Send Embed</button>
-        </div>
-        
-        <div id="fileOptions" class="hidden">
-            <h2>Upload a File</h2>
-            <div class="dropzone" id="dropzone">
-                <p>Drag and drop a file here or click to select one</p>
-                <input type="file" id="fileInput">
-                <button onclick="document.getElementById('fileInput').click()">Select File</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function showOptions() {
-            const selectedOption = document.getElementById('webhookSelect').selectedOptions[0];
-            const webhookURL = selectedOption ? selectedOption.getAttribute('data-webhook') : null;
-            if (webhookURL) {
-                document.getElementById('options').classList.remove('hidden');
-            } else {
-                alert('Please select a webhook first.');
-            }
-        }
-
-        function handleOption(option) {
-            if (option === 'embed') {
-                document.getElementById('embedOptions').classList.remove('hidden');
-                document.getElementById('fileOptions').classList.add('hidden');
-            } else if (option === 'file') {
-                document.getElementById('fileOptions').classList.remove('hidden');
-                document.getElementById('embedOptions').classList.add('hidden');
-            } else {
-                alert(`You selected ${option} for the chosen webhook.`);
-                document.getElementById('fileOptions').classList.add('hidden');
-                document.getElementById('embedOptions').classList.add('hidden');
-            }
-        }
-
-        function updateEmbedPreview() {
-            const title = document.getElementById('embedTitle').value || 'Title';
-            const description = document.getElementById('embedDescription').value || 'Description';
-            const color = document.getElementById('embedColor').value || '#7289DA';
-
-            document.getElementById('embedTitlePreview').textContent = title;
-            document.getElementById('embedDescriptionPreview').textContent = description;
-            document.getElementById('embedPreview').style.borderColor = color;
-        }
-
-        function sendEmbed() {
-            const selectedOption = document.getElementById('webhookSelect').selectedOptions[0];
-            const webhookURL = selectedOption ? selectedOption.getAttribute('data-webhook') : null;
-            const title = document.getElementById('embedTitle').value || 'Title';
-            const description = document.getElementById('embedDescription').value || 'Description';
-            const color = document.getElementById('embedColor').value || '#7289DA';
-
-            if (!webhookURL) {
-                alert('Please select a webhook URL.');
-                return;
-            }
-
-            const payload = {
-                content: '',
+    <button class="youtube-button" onclick="window.open('https://www.youtube.com', '_blank')">
+        Open YouTube
+    </button>
+</body>
+</html>
